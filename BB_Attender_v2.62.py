@@ -605,6 +605,11 @@ print('\n\n\n\n                    DEADPOOL is your UNCLE\n\n\n\n')
 screenshot_folder_name = "Session's Screenshots"  #name of the screenshot folder
 data_file_name = 'Account' #without the extension
 
+#testing the sound alaram
+print ('Testing Alarm sound:\n')
+alarm()
+
+
 #time_start = '07:45' #str(input())
 #time_ends = '17:15' #str(input())
 
