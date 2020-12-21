@@ -321,11 +321,14 @@ def session_attender(a): #select and attend the sessions
                             time.sleep(5)
                         except:
                             pass
-                        session_name_png = str(screenshot_folder_name + '/' + session_name + '.png')
-                        browser.save_screenshot(session_name_png)
-                        time.sleep(2)
-                        print(current_time() + ' >> Screenshot was taken! for the following session: ' + session_name)
-                        print('')
+                        try:
+                            session_name_png = str(screenshot_folder_name + '/' + session_name + '.png')
+                            browser.save_screenshot(session_name_png)
+                            time.sleep(2)
+                            print(current_time() + ' >> Screenshot was taken! for the following session: ' + session_name)
+                            print('')
+                        except:
+                            print("Error 654: Couldn't take a screenshot for some reason\n")
                         try:
                             time.sleep(5)
                             browser.find_element_by_xpath("//*[@id='session-menu-close']").click() #to close the session menu
