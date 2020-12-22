@@ -637,6 +637,6 @@ else:
     program_true()
 
 
-# to compile to exe with Pyinstaller use this command in the project folder "Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender_v2.62.py"
+# to compile to exe with Pyinstaller use this command in the project folder "Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py"
 #https://www.zacoding.com/en/post/python-selenium-to-exe/
 #https://stackoverflow.com/questions/47690548/running-pyinstaller-another-pc-with-chromedriver
