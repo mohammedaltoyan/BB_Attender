@@ -323,7 +323,12 @@ def session_attender(a): #select and attend the sessions
                             pass
                         try:
                             session_name_png = str(screenshot_folder_name + '/' + session_name + '.png')
-                            browser.save_screenshot(session_name_png)
+                            characters_to_remove = '\/:*?"<>|' #prohibited by windows file name
+                            filtered_session_name_png = session_name_png
+                            for character in characters_to_remove:
+                                filtered_session_name_png = filtered_session_name_png.replace(character, " ")
+                            time.sleep(2)
+                            browser.save_screenshot(filtered_session_name_png)
                             time.sleep(2)
                             print(current_time() + ' >> Screenshot was taken! for the following session: ' + session_name)
                             print('')
