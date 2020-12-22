@@ -447,6 +447,13 @@ def tabs_loop(t,all): #go through the tabs and search for errors #todo make the 
         pass
 
     try:
+        overlay = browser.find_element_by_xpath("/html/body/div[4]") # click on the overlay screen to
+        time.sleep(2)
+        overlay.click()
+    except :
+        pass
+
+    try:
         reload = browser.find_element_by_xpath("//*[@id='connection-status-alert']/div[2]/button") # reload the session while we are in, not yet discontinued
         time.sleep(2)
         reload.click()
