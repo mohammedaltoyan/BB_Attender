@@ -1,4 +1,4 @@
-#BB_Attender v2.62
+#BB_Attender v2.64
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
 
@@ -649,3 +649,4 @@ else:
 #https://www.zacoding.com/en/post/python-selenium-to-exe/
 #https://stackoverflow.com/questions/47690548/running-pyinstaller-another-pc-with-chromedriver
 #https://cryptolens.io/
+#https://www.sendowl.com/
