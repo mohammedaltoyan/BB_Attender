@@ -1,4 +1,4 @@
-#BB_Attender v2.64
+print('BB_Attender v2.65')
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
 
@@ -185,14 +185,14 @@ def ultra_open():  # open Blackboard_ultra
             #print('Error #10.1')
             pass
 
-        try:
-            WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='menuPuller']")))
-            munu_bar = browser.find_element_by_xpath("//*[@id='menuPuller']")
-            time.sleep(2)
-            munu_bar.click()
-        except TimeoutException:
-            #print('Error #9!')
-            pass
+        #try:
+        #    WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='menuPuller']")))
+        #    munu_bar = browser.find_element_by_xpath("//*[@id='menuPuller']")
+        #    time.sleep(2)
+        #    munu_bar.click()
+        #except TimeoutException:
+        #    #print('Error #9!')
+        #    pass
 
         try:
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.LINK_TEXT, 'Virtual Classes')))
@@ -200,11 +200,27 @@ def ultra_open():  # open Blackboard_ultra
             time.sleep(2)
             virtual_classes_button.click()
         except TimeoutException:
+            WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='menuPuller']")))
+            munu_bar = browser.find_element_by_xpath("//*[@id='menuPuller']")
+            time.sleep(2)
+            munu_bar.click()
+            time.sleep(2)
+            WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.LINK_TEXT, 'Virtual Classes')))
+            virtual_classes_button = browser.find_element_by_link_text('Virtual Classes')
+            time.sleep(2)
+            virtual_classes_button.click()
             #print('Error #9!')
-            pass
         except:
+            WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='menuPuller']")))
+            munu_bar = browser.find_element_by_xpath("//*[@id='menuPuller']")
+            time.sleep(2)
+            munu_bar.click()
+            time.sleep(2)
+            WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.LINK_TEXT, 'Virtual Classes')))
+            virtual_classes_button = browser.find_element_by_link_text('Virtual Classes')
+            time.sleep(2)
+            virtual_classes_button.click()
             #print('Error #9.1')
-            pass
         try:
             WebDriverWait(browser, 10 * delay).until(EC.visibility_of_element_located((By.LINK_TEXT, 'Blackboard Collaborate Ultra')))
             ultra_button = browser.find_element_by_link_text('Blackboard Collaborate Ultra') #Blackboard Collaborate Ultra Button
@@ -295,7 +311,8 @@ def session_attender(a): #select and attend the sessions
                         q.click()
                         browser.switch_to.window(browser.window_handles[-1])
                         try:  # clicking on mic notification to dismiss it
-                            WebDriverWait(browser, 1.5 * delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='techcheck-modal']/button")))
+                            WebDriverWait(browser, 1.5 * delay).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='techcheck-modal']/button")))
+                            #WebDriverWait(browser, 1.5 * delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='techcheck-modal']/button")))
                             q = browser.find_element_by_xpath("//*[@id='techcheck-modal']/button")
                             time.sleep(5)
                             q.click()
@@ -303,7 +320,8 @@ def session_attender(a): #select and attend the sessions
                             #close_session_details( # 32)
                             pass
                         try:  # clicking on tour notification to dismiss it
-                            WebDriverWait(browser, 1.5 * delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='announcement-modal-page-wrap']/button")))
+                            WebDriverWait(browser, 1.5 * delay).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='announcement-modal-page-wrap']/button")))
+                            #WebDriverWait(browser, 1.5 * delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='announcement-modal-page-wrap']/button")))
                             q = browser.find_element_by_xpath("//*[@id='announcement-modal-page-wrap']/button")
                             time.sleep(5)
                             q.click()
