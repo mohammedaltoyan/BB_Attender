@@ -1,4 +1,4 @@
-print('BB_Attender v2.65')
+print('BB_Attender v2.66')
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
 
@@ -310,17 +310,21 @@ def session_attender(a): #select and attend the sessions
                         time.sleep(5)
                         q.click()
                         browser.switch_to.window(browser.window_handles[-1])
+                        time.sleep(20)
+                        extended_dealy = delay * 1.5
                         try:  # clicking on mic notification to dismiss it
-                            WebDriverWait(browser, 1.5 * delay).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='techcheck-modal']/button")))
+                            WebDriverWait(browser, extended_dealy).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='techcheck-modal']/button")))
                             #WebDriverWait(browser, 1.5 * delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='techcheck-modal']/button")))
                             q = browser.find_element_by_xpath("//*[@id='techcheck-modal']/button")
                             time.sleep(5)
                             q.click()
                         except:
                             #close_session_details( # 32)
+                            print('Error: mic notification not clicked')
                             pass
+                        time.sleep(20)
                         try:  # clicking on tour notification to dismiss it
-                            WebDriverWait(browser, 1.5 * delay).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='announcement-modal-page-wrap']/button")))
+                            WebDriverWait(browser, extended_dealy).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='announcement-modal-page-wrap']/button")))
                             #WebDriverWait(browser, 1.5 * delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='announcement-modal-page-wrap']/button")))
                             q = browser.find_element_by_xpath("//*[@id='announcement-modal-page-wrap']/button")
                             time.sleep(5)
