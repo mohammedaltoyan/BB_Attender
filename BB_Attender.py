@@ -1,4 +1,7 @@
-print('BB_Attender v2.66')
+#  Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py
+
+Program_version = 'BB_Attender v3.0'
+print(Program_version)
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
 
@@ -233,10 +236,24 @@ def ultra_open():  # open Blackboard_ultra
             #print('Error #8.1')
             pass
         try:
+            time.sleep(1)
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='collabUltraLtiFrame']")))
+            time.sleep(1)
             BB_ultra_link = browser.find_element_by_xpath("//*[@id='collabUltraLtiFrame']").get_attribute('src')  # to get Ultra Frame URL
+            time.sleep(1)
+            while BB_ultra_link == 'None':
+                time.sleep(1)
+                WebDriverWait(browser, delay).until(
+                    EC.visibility_of_element_located((By.XPATH, "//*[@id='collabUltraLtiFrame']")))
+                time.sleep(1)
+                BB_ultra_link = browser.find_element_by_xpath("//*[@id='collabUltraLtiFrame']").get_attribute(
+                    'src')  # to get Ultra Frame URL
+                time.sleep(1)
+                browser.get(BB_ultra_link)
+                time.sleep(1)
             time.sleep(2)
             browser.get(BB_ultra_link)
+            time.sleep(2)
             return (BB_ultra_link)
         except TimeoutException:
             #print('Error #7')
@@ -260,12 +277,8 @@ def ultra_exist():  # check if BB Ultra is loaded
             #print('Error #12.1')
             ultra_exist()
 
-def session_attender(a): #select and attend the sessions
-    delay = get_data('delay')  # seconds
-    main_handle = browser.current_window_handle #main tab for BB ultra to show the sessions
-    #opened_tabs = [] #for opened sessions #todo delete
+def session_attender_1(): #select and attend the sessions
     session_names_list = []
-    session_names_elem_dict = {} #show session's names and web element in a dict
     session_number_names_dict = {} #show session's names and web a number in a dict to make the user choose in an easy way
     session_name_elements = sessions_elements()
     y = 1
@@ -274,131 +287,140 @@ def session_attender(a): #select and attend the sessions
         y += 1
     time.sleep(2)
     [print(key, ' : ', value) for key, value in session_number_names_dict.items()] # Show session names for first page only.
-    session_numbers_input = input("\n Enter the session's number that you would like to attend separated by comma ',' NO SPACES!>>")
+    session_numbers_input = input("\n Enter the session's number that you would like to attend separated by comma '.' NO SPACES!>>")
     refresh_rate = float(input('\n Page Refresh rate? in minutes>>'))
     print('')
-    session_numbers_list = session_numbers_input.split(',')
+    session_numbers_list = session_numbers_input.split('.')
     session_numbers_list = [int (i) for i in session_numbers_list ] #make the number written integers so we can call them from different dict
     for s in session_numbers_list:
         session_names_list.append((session_number_names_dict[s]))
-    while (session_names_list != []) or (opened_tabs_1 != []):
-        for session_name in session_names_list:
-            time.sleep(2)
-            print(current_time() + " >> The following sessions will be attended, Stay tuned!>> ")
-            print()
-            print(*session_names_list, sep="\n")
-            print('')
-            print(str(current_time() + ' >> Checking if the following session has opened:>> {x}\n').format(x=session_name))
-            if internet() == False:
-                print('Error #14: Check internet connection\n')
-                alarm()
-            else:
-                try:
-                    browser.get(a)
-                    ultra_exist()
-                    if session_names_elem_dict != {} : #we should clear the list because the session IDs differs everytime the page refreshes!
-                        session_names_elem_dict.clear()
-                    session_name_elements = sessions_elements()
-                    for x in session_name_elements:  # to get the new elements after refreshing the page
-                        session_names_elem_dict |= {x.text: x}
-                    elem = session_names_elem_dict[session_name]
-                    elem.click()
-                    time.sleep(2)
-                    try:  # clicking on join session
-                        WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='offcanvas-wrap']/div[2]/div/div/div/div/div[2]/div")))
-                        q = browser.find_element_by_xpath("//*[@id='offcanvas-wrap']/div[2]/div/div/div/div/div[2]/div")
-                        time.sleep(5)
-                        q.click()
-                        browser.switch_to.window(browser.window_handles[-1])
-                        time.sleep(20)
-                        extended_dealy = delay * 1.5
-                        try:  # clicking on mic notification to dismiss it
-                            WebDriverWait(browser, extended_dealy).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='techcheck-modal']/button")))
-                            #WebDriverWait(browser, 1.5 * delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='techcheck-modal']/button")))
-                            q = browser.find_element_by_xpath("//*[@id='techcheck-modal']/button")
-                            time.sleep(5)
-                            q.click()
-                        except:
-                            #close_session_details( # 32)
-                            print('Error: mic notification not clicked')
-                            pass
-                        time.sleep(20)
-                        try:  # clicking on tour notification to dismiss it
-                            WebDriverWait(browser, extended_dealy).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='announcement-modal-page-wrap']/button")))
-                            #WebDriverWait(browser, 1.5 * delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='announcement-modal-page-wrap']/button")))
-                            q = browser.find_element_by_xpath("//*[@id='announcement-modal-page-wrap']/button")
-                            time.sleep(5)
-                            q.click()
-                            print(current_time() + ' >> ' + session_name + ' was entered successfully!\n')
-                        except :
-                            #close_session_details(#31)
-                            pass
-                        try:
-                            time.sleep(5)
-                            browser.find_element_by_xpath("//*[@id='side-panel-open']").click() #to press an icon to show the participants
-                            time.sleep(5)
-                            browser.find_element_by_xpath("//*[@id='panel-control-participants']").click() #to show the names of participants
-                            time.sleep(5)
-                            browser.find_element_by_xpath("// *[ @ id = 'session-menu-open']").click() #to show the side session for session name
-                            time.sleep(5)
-                        except:
-                            pass
-                        try:
-                            characters_to_remove = '\/:*?"<>|' #prohibited by windows file name
-                            filtered_session_name = session_name
+    return(session_names_list,refresh_rate)
 
-                            for character in characters_to_remove:
-                                filtered_session_name = filtered_session_name.replace(character, " ")
-                            session_name_png = str(screenshot_folder_name + '/' + filtered_session_name + '.png')
-                            time.sleep(2)
-                            browser.save_screenshot(session_name_png)
-                            time.sleep(2)
-                            print(current_time() + ' >> Screenshot was taken! for the following session: ' + session_name)
-                            print('')
-                        except:
-                            print("Error 654: Couldn't take a screenshot for some reason\n")
-                        try:
-                            time.sleep(5)
-                            browser.find_element_by_xpath("//*[@id='session-menu-close']").click() #to close the session menu
-                            time.sleep(5)
-                            browser.find_element_by_xpath("//*[@id='side-panel-close']").click() #to to  close the side panel menu of participation
-                            time.sleep(5)
-                        except:
-                            pass
-                        browser.switch_to.window(main_handle)
-                        session_names_list.remove(session_name)
-                        close_session_details()
-                    except:
-                        close_session_details()
-                except:
-                    close_session_details()
-        opened_tabs_1 = []
-        for tab in browser.window_handles:
-            if tab == main_handle:
-                pass
-            else:
-                opened_tabs_1.append(tab)
-        if opened_tabs_1 != []:
-            for open_tab in opened_tabs_1:  # go through the opened tabs and check if there is any problem with them
+def session_attender_2(url, session_names_list, refresh_rate):
+    try:
+        delay = get_data('delay')  # seconds
+        main_handle = browser.current_window_handle #main tab for BB ultra to show the sessions
+        session_names_elem_dict = {} #show session's names and web element in a dict
+
+        while (session_names_list != []) or (opened_tabs_1 != []):
+            for session_name in session_names_list:
+                time.sleep(2)
+                print(current_time() + " >> The following sessions will be attended, Stay tuned!>> ")
+                print('')
+                print(*session_names_list, sep="\n")
+                print('')
+                print(str(current_time() + ' >> Checking if the following session has opened:>> {x}\n').format(x=session_name))
                 if internet() == False:
                     print('Error #14: Check internet connection\n')
                     alarm()
-                try:
-                    tabs_loop(open_tab, opened_tabs_1)
-                    title = browser.title
-                    print(current_time() + ' >> Done checking upon the following session >> ' + title + '\n')
-                except:
-                    print('Error #706')
-        else:
-            print(current_time() + ' >> There is no windows opened')
-        browser.switch_to.window(main_handle)
-        print(
-            str(current_time() + " >> We are gonna refresh the page in {y} minutes, stay calm!".format(y=refresh_rate)))
-        print('')
-        time.sleep((refresh_rate * 60))
-    else:
-        print(current_time() + ' >> All sessions have been attended successfully\n')
+                else:
+                    try:
+                        browser.get(url)
+                        ultra_exist()
+                        if session_names_elem_dict != {} : #we should clear the list because the session IDs differs everytime the page refreshes!
+                            session_names_elem_dict.clear()
+                        session_name_elements = sessions_elements()
+                        for x in session_name_elements:  # to get the new elements after refreshing the page
+                            session_names_elem_dict |= {x.text: x}
+                        elem = session_names_elem_dict[session_name]
+                        elem.click()
+                        time.sleep(2)
+                        try:  # clicking on join session
+                            WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='offcanvas-wrap']/div[2]/div/div/div/div/div[2]/div")))
+                            q = browser.find_element_by_xpath("//*[@id='offcanvas-wrap']/div[2]/div/div/div/div/div[2]/div")
+                            time.sleep(5)
+                            q.click()
+                            browser.switch_to.window(browser.window_handles[-1])
+                            time.sleep(20)
+                            extended_dealy = delay * 1.5
+                            try:  # clicking on mic notification to dismiss it
+                                WebDriverWait(browser, extended_dealy).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='techcheck-modal']/button")))
+                                #WebDriverWait(browser, 1.5 * delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='techcheck-modal']/button")))
+                                q = browser.find_element_by_xpath("//*[@id='techcheck-modal']/button")
+                                time.sleep(5)
+                                q.click()
+                            except:
+                                #close_session_details( # 32)
+                                print('Error: mic notification not clicked')
+                                pass
+                            time.sleep(20)
+                            try:  # clicking on tour notification to dismiss it
+                                WebDriverWait(browser, extended_dealy).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='announcement-modal-page-wrap']/button")))
+                                #WebDriverWait(browser, 1.5 * delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='announcement-modal-page-wrap']/button")))
+                                q = browser.find_element_by_xpath("//*[@id='announcement-modal-page-wrap']/button")
+                                time.sleep(5)
+                                q.click()
+                                print(current_time() + ' >> ' + session_name + ' was entered successfully!\n')
+                            except :
+                                #close_session_details(#31)
+                                pass
+                            try:
+                                time.sleep(5)
+                                browser.find_element_by_xpath("//*[@id='side-panel-open']").click() #to press an icon to show the participants
+                                time.sleep(5)
+                                browser.find_element_by_xpath("//*[@id='panel-control-participants']").click() #to show the names of participants
+                                time.sleep(5)
+                                browser.find_element_by_xpath("// *[ @ id = 'session-menu-open']").click() #to show the side session for session name
+                                time.sleep(5)
+                            except:
+                                pass
+                            try:
+                                characters_to_remove = '\/:*?"<>|' #prohibited by windows file name
+                                filtered_session_name = session_name
 
+                                for character in characters_to_remove:
+                                    filtered_session_name = filtered_session_name.replace(character, " ")
+                                session_name_png = str(screenshot_folder_name + '/' + filtered_session_name + '.png')
+                                time.sleep(2)
+                                browser.save_screenshot(session_name_png)
+                                time.sleep(2)
+                                print(current_time() + ' >> Screenshot was taken! for the following session: ' + session_name)
+                                print('')
+                            except:
+                                print("Error 654: Couldn't take a screenshot for some reason\n")
+                            try:
+                                time.sleep(5)
+                                browser.find_element_by_xpath("//*[@id='session-menu-close']").click() #to close the session menu
+                                time.sleep(5)
+                                browser.find_element_by_xpath("//*[@id='side-panel-close']").click() #to to  close the side panel menu of participation
+                                time.sleep(5)
+                            except:
+                                pass
+                            browser.switch_to.window(main_handle)
+                            session_names_list.remove(session_name)
+                            close_session_details()
+                        except:
+                            close_session_details()
+                    except:
+                        close_session_details()
+            opened_tabs_1 = []
+            for tab in browser.window_handles:
+                if tab == main_handle:
+                    pass
+                else:
+                    opened_tabs_1.append(tab)
+            if opened_tabs_1 != []:
+                for open_tab in opened_tabs_1:  # go through the opened tabs and check if there is any problem with them
+                    if internet() == False:
+                        print('Error #14: Check internet connection\n')
+                        alarm()
+                    try:
+                        tabs_loop(open_tab, opened_tabs_1)
+                        title = browser.title
+                        print(current_time() + ' >> Done checking upon the following session >> ' + title + '\n')
+                    except:
+                        print('Error #706')
+            else:
+                print(current_time() + ' >> There is no windows opened')
+            browser.switch_to.window(main_handle)
+            print(
+                str(current_time() + " >> We are gonna refresh the page in {y} minutes, stay calm!".format(y=refresh_rate)))
+            print('')
+            time.sleep((refresh_rate * 60))
+        else:
+            print(current_time() + ' >> All sessions have been attended successfully\n')
+    except:
+        session_attender_2(url, session_names_list, refresh_rate)
 
 
 def close_session_details(): #close the session details
@@ -575,14 +597,19 @@ def program_true(): #input names of courses to be entered
         alarm()
         print('Error #54: Check internet connection\n')
     else:
-        open_site()
-        fill_cred()
-        terms_agree()
-        url = ultra_open() #URL = Blackboard Ultra separate URL to be opened standalone
-        ultra_exist()
-        session_attender(url)
-        browser.quit()
-
+        try:
+            open_site()
+            fill_cred()
+            terms_agree()
+            url = ultra_open() #URL = Blackboard Ultra separate URL to be opened standalone
+            ultra_exist()
+            session_names_list,refresh_rate= session_attender_1() #to get the session names to attend
+            session_attender_2(url,session_names_list,refresh_rate)
+            browser.quit()
+        except:
+            print('Error:454')
+            while True:
+                alarm()
 
 
 
