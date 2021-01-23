@@ -420,6 +420,7 @@ def session_attender_2(url, session_names_list, refresh_rate):
         else:
             print(current_time() + ' >> All sessions have been attended successfully\n')
     except:
+        time.sleep(5)
         session_attender_2(url, session_names_list, refresh_rate)
 
 
