@@ -1,6 +1,6 @@
 #  Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py
 
-Program_version = 'BB_Attender v3.01'
+Program_version = 'BB_Attender v3.02'
 print(Program_version)
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
@@ -290,10 +290,17 @@ def session_attender_1(): #select and attend the sessions
     session_numbers_input = input("\n Enter the session's number that you would like to attend separated by comma '.' NO SPACES!>>")
     refresh_rate = float(input('\n Page Refresh rate? in minutes>>'))
     print('')
-    session_numbers_list = session_numbers_input.split('.')
-    session_numbers_list = [int (i) for i in session_numbers_list ] #make the number written integers so we can call them from different dict
-    for s in session_numbers_list:
-        session_names_list.append((session_number_names_dict[s]))
+    session_numbers_list = session_numbers_input.split('.') #or names
+    try:
+        session_numbers_list = [int (i) for i in session_numbers_list ] #make the number written integers so we can call them from different dict
+    except:
+        pass #if the sessoin's name NOT the number is inputted
+    try:
+        for s in session_numbers_list:
+            session_names_list.append((session_number_names_dict[s]))
+    except:
+        for s in session_numbers_list:
+            session_names_list.append(s)
     return(session_names_list,refresh_rate)
 
 def session_attender_2(url, session_names_list, refresh_rate):
