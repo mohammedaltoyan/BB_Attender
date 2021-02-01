@@ -278,28 +278,54 @@ def ultra_exist():  # check if BB Ultra is loaded
             ultra_exist()
 
 def session_attender_1(): #select and attend the sessions
-    session_names_list = []
+    session_names_list = [] #list to be attended
+    sessoin_names = [] #list of all session of pages from 1 to x
     session_number_names_dict = {} #show session's names and web a number in a dict to make the user choose in an easy way
-    session_name_elements = sessions_elements()
+    delay = get_data('delay')  # seconds
+    t = 1
+    while t != 5:
+        try:  # getting the sessions names
+            WebDriverWait(browser, delay).until(
+                EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "span[class = 'name ng-binding']")))
+            table_content = browser.find_element_by_xpath(
+                '//*[@id="body-content"]/div[3]/ul')  # to locate the table content
+            # table_content = browser.find_element_by_xpath('//*[@id="main-content"]/div[1]/div/div') #this is for testing #for course session not the real sessions # DELETE AND RETURN THE ABOPVE ONE
+            session_names = table_content.find_elements_by_css_selector(
+                "span[class = 'name ng-binding']")  # to locate each topic name
+            for name in session_names:
+                if name.text not in sessoin_names:
+                    sessoin_names.append(name.text)
+                else:
+                    pass
+            browser.find_element_by_xpath("//*[@id='main-content']/footer/ol/li[4]/button/bb-svg-icon").click() #click next page
+            t += 1
+
+        except TimeoutException:
+            print('Error #130\n')
+            alarm()
+        except:
+            print('Error #130.50\n')
+            alarm()
+
+
     y = 1
-    for x in session_name_elements:  # filling a dictionary for session names and corresponding number so the user can choose easily
-        session_number_names_dict |= {y : x.text}
+    for x in sessoin_names:  # filling a dictionary for session names and corresponding number so the user can choose easily
+        session_number_names_dict |= {y : x}
         y += 1
     time.sleep(2)
     [print(key, ' : ', value) for key, value in session_number_names_dict.items()] # Show session names for first page only.
-    session_numbers_input = input("\n Enter the session's number that you would like to attend separated by comma '.' NO SPACES!>>")
+    session_numbers_input = input("\n Enter the session's number that you would like to attend separated by dot '.' NO SPACES!>>")
     refresh_rate = float(input('\n Page Refresh rate? in minutes>>'))
     print('')
-    session_numbers_list = session_numbers_input.split(',') #or names
+    session_numbers_list = session_numbers_input.split('.') #or names
     try:
         session_numbers_list = [int (i) for i in session_numbers_list ] #make the number written integers so we can call them from different dict
     except:
         pass #if the sessoin's name NOT the number is inputted
-    try:
-        for s in session_numbers_list:
+    for s in session_numbers_list:
+        try:
             session_names_list.append((session_number_names_dict[s]))
-    except:
-        for s in session_numbers_list:
+        except:
             session_names_list.append(s)
     return(session_names_list,refresh_rate)
 
