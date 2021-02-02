@@ -1,6 +1,6 @@
 #  Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py
 
-Program_version = 'BB_Attender v4.02'
+Program_version = 'BB_Attender v4.30'
 print(Program_version)
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
@@ -297,7 +297,10 @@ def session_attender_1(): #select and attend the sessions
                     sessoin_names.append(name.text)
                 else:
                     pass
-            browser.find_element_by_xpath("//*[@id='main-content']/footer/ol/li[4]/button/bb-svg-icon").click() #click next page
+            try:
+                browser.find_element_by_xpath("//*[@id='main-content']/footer/ol/li[4]/button/bb-svg-icon").click() #click next page
+            except:
+                pass
             t += 1
 
         except TimeoutException:
@@ -632,18 +635,41 @@ def program_true(): #input names of courses to be entered
         print('Error #54: Check internet connection\n')
     else:
         try:
-            open_site()
-            fill_cred()
-            terms_agree()
-            url = ultra_open() #URL = Blackboard Ultra separate URL to be opened standalone
-            ultra_exist()
+            url = q1()
             session_names_list,refresh_rate= session_attender_1() #to get the session names to attend
-            session_attender_2(url,session_names_list,refresh_rate)
-            browser.quit()
+            program_true_2(url,session_names_list,refresh_rate)
         except:
             print('Error:454')
             while True:
                 alarm()
+
+def program_true_2(url,session_names_list,refresh_rate): #input names of courses to be entered
+    import time
+    if internet() == False:
+        alarm()
+        print('Error #54: Check internet connection\n')
+    else:
+        try:
+            session_attender_2(url,session_names_list,refresh_rate)
+            browser.quit()
+        except:
+            print('Error:454')
+            alarm()
+            url_1 = q1()
+            program_true_2(url_1,session_names_list,refresh_rate)
+
+def q1():
+    open_site()
+    fill_cred()
+    terms_agree()
+    url = ultra_open()  # URL = Blackboard Ultra separate URL to be opened standalone
+    ultra_exist()
+    return (url)
+
+
+
+
+
 
 
 
