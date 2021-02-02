@@ -1,6 +1,6 @@
 #  Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py
 
-Program_version = 'BB_Attender v4.30'
+Program_version = 'BB_Attender v4.32'
 print(Program_version)
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
@@ -115,6 +115,30 @@ def open_site():  # open & login
         except:
             #print("Error #4: Could not open site")
             open_site()
+def open_site_2():  # open & login
+    if internet() == False:
+        alarm()
+        print('Error #55: Check internet connection\n')
+    else:
+        try:
+            #browser.get('https://lms.ksau-hs.edu.sa/') #URL for KSAUHS (blackboard) log in page #shorten URL to have control
+            browser.get('https://cutt.ly/ChGhBSA')
+            delay = get_data('delay')  # seconds
+            try:
+                WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='myButton']")))
+                log_in_button_1 = browser.find_element_by_xpath("//*[@id='myButton']") ##1st log in button on KSAUHS website
+                time.sleep(2)
+                log_in_button_1.click()
+            except TimeoutException:
+                #print('Error #3: Element not found! Try again!')
+                pass
+            except :
+                #print('Error #3.1: Element not found! Try again!')
+                pass
+        except:
+            #print("Error #4: Could not open site")
+            pass
+
 
 def fill_cred(): #fill up account info to log in
     delay = get_data('delay')  # seconds
@@ -140,6 +164,30 @@ def fill_cred(): #fill up account info to log in
             #print('Error #5.1: Element not found! Try again!')
             fill_cred()
 
+def fill_cred_2(): #fill up account info to log in
+    delay = get_data('delay')  # seconds
+    if internet() == False:
+        alarm()
+        print('Error #56: Check internet connection\n')
+    else:
+        try:
+            WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='submitButton']")))
+            time.sleep(2)
+            username = get_data('username')
+            password = get_data('password')
+            username_elem = browser.find_element_by_xpath("//*[@id='userNameInput']")  # Username input element
+            username_elem.send_keys(username)
+            password_elem = browser.find_element_by_xpath("//*[@id='passwordInput']")  # password input element
+            password_elem.send_keys(password)
+            log_in_button_2 = browser.find_element_by_xpath("//*[@id='submitButton']")  # 2nd log in button on the website
+            log_in_button_2.click()
+        except TimeoutException:
+            #print('Error #5: Timeout!')  # todo repeat 5 times then an alert should fire up
+            pass
+        except:
+            #print('Error #5.1: Element not found! Try again!')
+            pass
+
 def terms_agree():  # Agree to website terms
     delay = get_data('delay')  # seconds
     if internet() == False:
@@ -157,6 +205,24 @@ def terms_agree():  # Agree to website terms
         except:
             #print('Error #6.1: Element not found! Try again!')
             terms_agree()
+def terms_agree():  # Agree to website terms
+    delay = get_data('delay')  # seconds
+    if internet() == False:
+        alarm()
+        print('Error #57: Check internet connection\n')
+    else:
+        try:
+            WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='agree_button']")))
+            terms_agree_button = browser.find_element_by_xpath("//*[@id='agree_button']")
+            time.sleep(2)
+            terms_agree_button.click()
+        except TimeoutException:
+            #print('Error #6: Agree button not found!')
+            pass
+        except:
+            #print('Error #6.1: Element not found! Try again!')
+            pass
+
 
 def ultra_open():  # open Blackboard_ultra
     delay = get_data('delay')  # seconds
@@ -655,7 +721,7 @@ def program_true_2(url,session_names_list,refresh_rate): #input names of courses
         except:
             print('Error:454')
             alarm()
-            url_1 = q1()
+            url_1 = q2()
             program_true_2(url_1,session_names_list,refresh_rate)
 
 def q1():
@@ -667,6 +733,13 @@ def q1():
     return (url)
 
 
+def q2():
+    open_site_2()
+    fill_cred_2()
+    terms_agree_2()
+    url = ultra_open()  # URL = Blackboard Ultra separate URL to be opened standalone
+    ultra_exist()
+    return (url)
 
 
 
