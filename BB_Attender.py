@@ -1,6 +1,6 @@
 #  Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py
 
-Program_version = 'BB_Attender v4.32'
+Program_version = 'BB_Attender v4.34'
 print(Program_version)
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
@@ -205,7 +205,7 @@ def terms_agree():  # Agree to website terms
         except:
             #print('Error #6.1: Element not found! Try again!')
             terms_agree()
-def terms_agree():  # Agree to website terms
+def terms_agree_2():  # Agree to website terms
     delay = get_data('delay')  # seconds
     if internet() == False:
         alarm()
