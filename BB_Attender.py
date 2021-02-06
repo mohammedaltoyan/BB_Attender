@@ -1,6 +1,6 @@
 #  Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py
 
-Program_version = 'BB_Attender v4.34'
+Program_version = 'BB_Attender v4.35'
 print(Program_version)
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
@@ -348,7 +348,8 @@ def session_attender_1(): #select and attend the sessions
     sessoin_names = [] #list of all session of pages from 1 to x
     session_number_names_dict = {} #show session's names and web a number in a dict to make the user choose in an easy way
     delay = get_data('delay')  # seconds
-    t = 1
+    t = 1 # for repetition only
+    r = 3 # the first page xpath starts with 2, second page xparh = 3
     while t != 5:
         try:  # getting the sessions names
             WebDriverWait(browser, delay).until(
@@ -364,17 +365,23 @@ def session_attender_1(): #select and attend the sessions
                 else:
                     pass
             try:
-                browser.find_element_by_xpath("//*[@id='main-content']/footer/ol/li[4]/button/bb-svg-icon").click() #click next page
+                # WebDriverWait(browser, delay).until(
+                #     EC.visibility_of_element_located((By.XPATH, "//*[@id='main-content']/footer/ol/li[4]/button/bb-svg-icon")))
+                xpath = "//*[@id='main-content']/footer/ol/li[{r}]/button/span".format(r=r)
+                browser.find_element_by_xpath(xpath).click() #click next page
+            except TimeoutException:
+                pass
             except:
                 pass
             t += 1
-
+            r += 1
         except TimeoutException:
             print('Error #130\n')
             alarm()
         except:
             print('Error #130.50\n')
             alarm()
+    browser.find_element_by_xpath("//*[@id='main-content']/footer/ol/li[2]/button/span").click() #click on page # 1
 
 
     y = 1
