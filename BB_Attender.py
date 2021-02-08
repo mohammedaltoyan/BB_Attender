@@ -1,6 +1,6 @@
 #  Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py
 
-Program_version = 'BB_Attender v4.35'
+Program_version = 'BB_Attender v4.36'
 print(Program_version)
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
@@ -335,13 +335,13 @@ def ultra_exist():  # check if BB Ultra is loaded
         print('Error #54: Check internet connection\n')
     else:
         try:
-            WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='body-content']")))
+            return  (WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='body-content']"))))
         except TimeoutException:
             #print('Error #12')
-            ultra_exist()
+            pass
         except:
             #print('Error #12.1')
-            ultra_exist()
+            pass
 
 def session_attender_1(): #select and attend the sessions
     session_names_list = [] #list to be attended
@@ -425,7 +425,12 @@ def session_attender_2(url, session_names_list, refresh_rate):
                 else:
                     try:
                         browser.get(url)
-                        ultra_exist()
+                        time.sleep(5)
+                        if bool(ultra_exist()) == True:
+                            pass
+                        else:
+                            url_1 = q2()
+                            program_true_2(url_1, session_names_list, refresh_rate)
                         if session_names_elem_dict != {} : #we should clear the list because the session IDs differs everytime the page refreshes!
                             session_names_elem_dict.clear()
                         session_name_elements = sessions_elements()
