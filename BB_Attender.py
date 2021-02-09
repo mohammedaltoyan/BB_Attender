@@ -1,6 +1,6 @@
 #  Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py
 
-Program_version = 'BB_Attender v4.36'
+Program_version = 'BB_Attender v4.37'
 print(Program_version)
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
@@ -381,7 +381,11 @@ def session_attender_1(): #select and attend the sessions
         except:
             print('Error #130.50\n')
             alarm()
-    browser.find_element_by_xpath("//*[@id='main-content']/footer/ol/li[2]/button/span").click() #click on page # 1
+
+    try:
+        browser.find_element_by_xpath("//*[@id='main-content']/footer/ol/li[2]/button/span").click() #click on page # 1
+    except:
+        pass
 
 
     y = 1
@@ -731,7 +735,7 @@ def program_true_2(url,session_names_list,refresh_rate): #input names of courses
             session_attender_2(url,session_names_list,refresh_rate)
             browser.quit()
         except:
-            print('Error:454')
+            print('Error:4540')
             alarm()
             url_1 = q2()
             program_true_2(url_1,session_names_list,refresh_rate)
