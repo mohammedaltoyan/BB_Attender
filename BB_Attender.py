@@ -1,6 +1,6 @@
 #  Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py
 
-Program_version = 'BB_Attender v4.37'
+Program_version = 'BB_Attender v4.39'
 print(Program_version)
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
@@ -102,16 +102,23 @@ def open_site():  # open & login
             browser.get('https://cutt.ly/ChGhBSA')
             delay = get_data('delay')  # seconds
             try:
+                #time.sleep(10)
                 WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='myButton']")))
                 log_in_button_1 = browser.find_element_by_xpath("//*[@id='myButton']") ##1st log in button on KSAUHS website
                 time.sleep(2)
                 log_in_button_1.click()
             except TimeoutException:
                 #print('Error #3: Element not found! Try again!')
-                open_site()
+                if bool(browser.find_element_by_xpath("//*[@id='submitButton']")) == True:
+                    pass
+                else:
+                    open_site()
             except :
                 #print('Error #3.1: Element not found! Try again!')
-                open_site()
+                if bool(browser.find_element_by_xpath("//*[@id='submitButton']")) == True:
+                    pass
+                else:
+                    open_site()
         except:
             #print("Error #4: Could not open site")
             open_site()
@@ -125,6 +132,7 @@ def open_site_2():  # open & login
             browser.get('https://cutt.ly/ChGhBSA')
             delay = get_data('delay')  # seconds
             try:
+                #time.sleep(10)
                 WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='myButton']")))
                 log_in_button_1 = browser.find_element_by_xpath("//*[@id='myButton']") ##1st log in button on KSAUHS website
                 time.sleep(2)
@@ -147,6 +155,7 @@ def fill_cred(): #fill up account info to log in
         print('Error #56: Check internet connection\n')
     else:
         try:
+            #time.sleep(10)
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='submitButton']")))
             time.sleep(2)
             username = get_data('username')
@@ -155,14 +164,22 @@ def fill_cred(): #fill up account info to log in
             username_elem.send_keys(username)
             password_elem = browser.find_element_by_xpath("//*[@id='passwordInput']")  # password input element
             password_elem.send_keys(password)
-            log_in_button_2 = browser.find_element_by_xpath("//*[@id='submitButton']")  # 2nd log in button on the website
+            time.sleep(2)
+            log_in_button_2 = browser.find_element_by_xpath("//*[@id='submitButton']").click()  # 2nd log in button on the website
+            time.sleep(2)
             log_in_button_2.click()
         except TimeoutException:
             #print('Error #5: Timeout!')  # todo repeat 5 times then an alert should fire up
-            fill_cred()
+            if bool(browser.find_element_by_xpath("//*[@id='agree_button']")) == True:
+                pass
+            else:
+                fill_cred()
         except:
             #print('Error #5.1: Element not found! Try again!')
-            fill_cred()
+            if bool(browser.find_element_by_xpath("//*[@id='agree_button']")) == True:
+                pass
+            else:
+                fill_cred()
 
 def fill_cred_2(): #fill up account info to log in
     delay = get_data('delay')  # seconds
@@ -171,6 +188,8 @@ def fill_cred_2(): #fill up account info to log in
         print('Error #56: Check internet connection\n')
     else:
         try:
+            #time.sleep(10)
+
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='submitButton']")))
             time.sleep(2)
             username = get_data('username')
@@ -195,16 +214,31 @@ def terms_agree():  # Agree to website terms
         print('Error #57: Check internet connection\n')
     else:
         try:
+            #time.sleep(10)
+            #print('1')
+            #time.sleep(3)
+            #time.sleep(10)
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='agree_button']")))
+            #print('found')
             terms_agree_button = browser.find_element_by_xpath("//*[@id='agree_button']")
-            time.sleep(2)
+            #print('variable assigned')
+            #time.sleep(5)
+            #print ('Slept')
             terms_agree_button.click()
+            #print('clicked')
         except TimeoutException:
             #print('Error #6: Agree button not found!')
-            terms_agree()
+            if bool(browser.find_element_by_xpath("//*[@id='agree_button']")) == False:
+                pass
+            else:
+                terms_agree()
         except:
             #print('Error #6.1: Element not found! Try again!')
-            terms_agree()
+            if bool(browser.find_element_by_xpath("//*[@id='agree_button']")) == False:
+                pass
+            else:
+                terms_agree()
+
 def terms_agree_2():  # Agree to website terms
     delay = get_data('delay')  # seconds
     if internet() == False:
@@ -722,8 +756,8 @@ def program_true(): #input names of courses to be entered
             program_true_2(url,session_names_list,refresh_rate)
         except:
             print('Error:454')
-            while True:
-                alarm()
+            alarm()
+            program_true()
 
 def program_true_2(url,session_names_list,refresh_rate): #input names of courses to be entered
     import time
