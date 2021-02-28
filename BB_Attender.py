@@ -1,6 +1,6 @@
 #  Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py
 
-Program_version = 'BB_Attender v4.39'
+Program_version = 'BB_Attender v4.43'
 print(Program_version)
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
@@ -102,23 +102,32 @@ def open_site():  # open & login
             browser.get('https://cutt.ly/ChGhBSA')
             delay = get_data('delay')  # seconds
             try:
-                #time.sleep(10)
+                time.sleep(3)
                 WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='myButton']")))
                 log_in_button_1 = browser.find_element_by_xpath("//*[@id='myButton']") ##1st log in button on KSAUHS website
-                time.sleep(2)
+                time.sleep(3)
                 log_in_button_1.click()
             except TimeoutException:
                 #print('Error #3: Element not found! Try again!')
                 if bool(browser.find_element_by_xpath("//*[@id='submitButton']")) == True:
-                    pass
-                else:
+                    fill_cred()
+                elif bool(browser.find_element_by_xpath("//*[@id='agree_button']")) == True:
+                    terms_agree()
+                elif bool(browser.find_element_by_xpath("//*[@id='myButton']")) == True:
                     open_site()
+                else:
+                    pass
             except :
                 #print('Error #3.1: Element not found! Try again!')
+                #print('Error #3: Element not found! Try again!')
                 if bool(browser.find_element_by_xpath("//*[@id='submitButton']")) == True:
-                    pass
-                else:
+                    fill_cred()
+                elif bool(browser.find_element_by_xpath("//*[@id='agree_button']")) == True:
+                    terms_agree()
+                elif bool(browser.find_element_by_xpath("//*[@id='myButton']")) == True:
                     open_site()
+                else:
+                    pass
         except:
             #print("Error #4: Could not open site")
             open_site()
@@ -135,7 +144,7 @@ def open_site_2():  # open & login
                 #time.sleep(10)
                 WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='myButton']")))
                 log_in_button_1 = browser.find_element_by_xpath("//*[@id='myButton']") ##1st log in button on KSAUHS website
-                time.sleep(2)
+                time.sleep(3)
                 log_in_button_1.click()
             except TimeoutException:
                 #print('Error #3: Element not found! Try again!')
@@ -155,19 +164,21 @@ def fill_cred(): #fill up account info to log in
         print('Error #56: Check internet connection\n')
     else:
         try:
-            #time.sleep(10)
+            time.sleep(3)
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='submitButton']")))
-            time.sleep(2)
             username = get_data('username')
             password = get_data('password')
             username_elem = browser.find_element_by_xpath("//*[@id='userNameInput']")  # Username input element
             username_elem.send_keys(username)
             password_elem = browser.find_element_by_xpath("//*[@id='passwordInput']")  # password input element
             password_elem.send_keys(password)
-            time.sleep(2)
-            log_in_button_2 = browser.find_element_by_xpath("//*[@id='submitButton']").click()  # 2nd log in button on the website
-            time.sleep(2)
-            log_in_button_2.click()
+            time.sleep(1)
+            print('1')
+            try:
+                browser.find_element_by_xpath("//*[@id='submitButton']").click()  # 2nd log in button on the website
+            except:
+                pass
+            print('2')
         except TimeoutException:
             #print('Error #5: Timeout!')  # todo repeat 5 times then an alert should fire up
             if bool(browser.find_element_by_xpath("//*[@id='agree_button']")) == True:
@@ -191,7 +202,7 @@ def fill_cred_2(): #fill up account info to log in
             #time.sleep(10)
 
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='submitButton']")))
-            time.sleep(2)
+            time.sleep(3)
             username = get_data('username')
             password = get_data('password')
             username_elem = browser.find_element_by_xpath("//*[@id='userNameInput']")  # Username input element
@@ -209,23 +220,27 @@ def fill_cred_2(): #fill up account info to log in
 
 def terms_agree():  # Agree to website terms
     delay = get_data('delay')  # seconds
+    time.sleep(2)
     if internet() == False:
         alarm()
         print('Error #57: Check internet connection\n')
     else:
         try:
             #time.sleep(10)
-            #print('1')
+            # print('1')
             #time.sleep(3)
-            #time.sleep(10)
+            time.sleep(2)
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='agree_button']")))
-            #print('found')
+            #WebDriverWait(browser, delay).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='agree_button']")))
+            #WebDriverWait(browser, delay).until(EC.presence_of_element_located((By.XPATH, "//*[@id='agree_button']")))
+
+            # print('found')
             terms_agree_button = browser.find_element_by_xpath("//*[@id='agree_button']")
-            #print('variable assigned')
-            #time.sleep(5)
-            #print ('Slept')
+            # print('variable assigned')
+            time.sleep(2)
+            # print ('Slept')
             terms_agree_button.click()
-            #print('clicked')
+            # print('clicked')
         except TimeoutException:
             #print('Error #6: Agree button not found!')
             if bool(browser.find_element_by_xpath("//*[@id='agree_button']")) == False:
@@ -248,7 +263,7 @@ def terms_agree_2():  # Agree to website terms
         try:
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='agree_button']")))
             terms_agree_button = browser.find_element_by_xpath("//*[@id='agree_button']")
-            time.sleep(2)
+            time.sleep(3)
             terms_agree_button.click()
         except TimeoutException:
             #print('Error #6: Agree button not found!')
@@ -265,9 +280,10 @@ def ultra_open():  # open Blackboard_ultra
         print('Error #58: Check internet connection\n')
     else:
         try:
+            time.sleep(2)
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.LINK_TEXT, "Courses" )))
             courses_button = browser.find_element_by_link_text('Courses')
-            time.sleep(2)
+            time.sleep(3)
             courses_button.click()
         except TimeoutException:
             #print('Error #11: Courses button not found!')
@@ -279,7 +295,7 @@ def ultra_open():  # open Blackboard_ultra
             course_name = get_data('course_name')
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.LINK_TEXT, course_name)))
             course_name_button = browser.find_element_by_partial_link_text(course_name)
-            time.sleep(2)
+            time.sleep(3)
             course_name_button.click()
         except TimeoutException:
             #print('Error #10')
@@ -771,20 +787,23 @@ def program_true_2(url,session_names_list,refresh_rate): #input names of courses
         except:
             print('Error:4540')
             alarm()
-            url_1 = q2()
+            url_1 = q1()
             program_true_2(url_1,session_names_list,refresh_rate)
 
 def q1():
     open_site()
     fill_cred()
+    #time.sleep(2)
     terms_agree()
+    #fill_cred()
+    #terms_agree()
     url = ultra_open()  # URL = Blackboard Ultra separate URL to be opened standalone
     ultra_exist()
     return (url)
 
 
 def q2():
-    open_site_2()
+    open_site()
     fill_cred_2()
     terms_agree_2()
     url = ultra_open()  # URL = Blackboard Ultra separate URL to be opened standalone
