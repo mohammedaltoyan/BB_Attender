@@ -1,6 +1,6 @@
 #  Pyinstaller -F --add-binary "./driver/chromedriver.exe;./driver" BB_Attender.py
 
-Program_version = 'BB_Attender v4.44'
+Program_version = 'BB_Attender v4.46'
 print(Program_version)
 
 #todo check for access denied for blackboard if refresh rate was slow and fix it, then implement the time system it was on previous version. The problem was the program wait to the official hours and when it refreshed the access will be denied
@@ -100,6 +100,7 @@ def open_site():  # open & login
         try:
             #browser.get('https://lms.ksau-hs.edu.sa/') #URL for KSAUHS (blackboard) log in page #shorten URL to have control
             browser.get('https://cutt.ly/ChGhBSA')
+            time.sleep(5)
             delay = get_data('delay')  # seconds
             try:
                 time.sleep(3)
@@ -124,8 +125,8 @@ def open_site():  # open & login
                     fill_cred()
                 elif bool(browser.find_element_by_xpath("//*[@id='agree_button']")) == True:
                     terms_agree()
-                elif bool(browser.find_element_by_xpath("//*[@id='myButton']")) == True:
-                    open_site()
+                if bool(browser.find_element_by_link_text("Courses")) == True:
+                    pass
                 else:
                     pass
         except:
@@ -173,15 +174,13 @@ def fill_cred(): #fill up account info to log in
             password_elem = browser.find_element_by_xpath("//*[@id='passwordInput']")  # password input element
             password_elem.send_keys(password)
             time.sleep(1)
-            print('1')
             try:
                 browser.find_element_by_xpath("//*[@id='submitButton']").click()  # 2nd log in button on the website
             except:
                 pass
-            print('2')
         except TimeoutException:
             #print('Error #5: Timeout!')  # todo repeat 5 times then an alert should fire up
-            if bool(browser.find_element_by_xpath("//*[@id='agree_button']")) == True:
+            if bool(browser.find_element_by_link_text("Courses")) == True:
                 pass
             else:
                 fill_cred()
@@ -229,7 +228,7 @@ def terms_agree():  # Agree to website terms
             #time.sleep(10)
             # print('1')
             #time.sleep(3)
-            time.sleep(2)
+            time.sleep(3)
             WebDriverWait(browser, delay).until(EC.visibility_of_element_located((By.XPATH, "//*[@id='agree_button']")))
             #WebDriverWait(browser, delay).until(EC.element_to_be_clickable((By.XPATH, "//*[@id='agree_button']")))
             #WebDriverWait(browser, delay).until(EC.presence_of_element_located((By.XPATH, "//*[@id='agree_button']")))
@@ -237,7 +236,7 @@ def terms_agree():  # Agree to website terms
             # print('found')
             terms_agree_button = browser.find_element_by_xpath("//*[@id='agree_button']")
             # print('variable assigned')
-            time.sleep(2)
+            time.sleep(8)
             # print ('Slept')
             terms_agree_button.click()
             # print('clicked')
